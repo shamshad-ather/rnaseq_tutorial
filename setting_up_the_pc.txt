@@ -1,0 +1,41 @@
+# install wsl
+
+# install Ubuntu
+wsl --install Ubuntu-24.04
+
+# check wsl version
+wsl --list --verbose
+
+# set wsl version
+wsl --set-version Ubuntu-24.04 2
+
+# install updates and build-essentials
+sudo apt update && sudo apt upgrade
+sudo apt install build-essential
+
+# install miniconda
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
+conda init
+
+# Restart your terminal
+
+# check conda installation
+conda --version
+
+# remove conda installer
+rm Miniconda3-latest-Linux-x86_64.sh
+
+# Add Channels
+conda config --add channels conda-forge
+conda config --add channels bioconda
+
+# Create conda environment
+conda create -n rnaseq python=3.10
+
+# Activate rnaseq environment
+conda activate rnaseq
+
+# Install necessary softwares/packages
+conda install sra-tools fastqc trimmomatic hisat2 samtools subread
+

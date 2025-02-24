@@ -1,0 +1,31 @@
+# fetch list of SRR from database
+prefetch -p --option-file *.txt
+
+# Extract the file to fastq
+fasterq-dump SRR*/*.sra
+
+# trim the files
+trimmomatic SE -phred33 SRR23753573.fastq SRR23753573_trimmed.fastq ILLUMINACLIP:TruSeq3-SE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+
+# Check qc
+fastqc *trimmed*
+
+# Index the genome usin hisat2 (move to the folder where refseq is present)
+hisat2-build genomic.fna yeast_hisat2
+
+# make a folder and move the indexed genome in the folder
+
+# move back to the project folder
+
+# Align the sequence using hisat2
+hisat2 -x /home/shamshad/refseq/index_hisat2/yeast_hisat2 SRR23753573_trimmed.fastq -S SRR23753573.sam -p 4
+
+# Convert sam to bam
+samtools view -S -b SRR23753573.sam > SRR23753573.bam
+
+# sort and index the bam
+samtools sort SRR23753573.bam -o SRR23753573_sorted.bam
+samtools index SRR23753573_sorted.bam
+
+# perform the feature count
+featureCounts -a annotation.gtf -o counts.txt SRR23753573_sorted.bam SRR23753574_sorted.bam SRR23753577_sorted.bam SRR23753578_sorted.bam
